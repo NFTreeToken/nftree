@@ -1,0 +1,15 @@
+{
+  "env": {
+    "mocha": true,
+    "truffle/globals": true
+  },
+  "extends": [
+    "@infuse/eslint-config"
+  ],
+  "ignorePatterns": [
+    "build"
+  ],
+  "plugins": [
+    "truffle"
+  ]
+}

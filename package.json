@@ -1,0 +1,15 @@
+{
+  "name": "nftree",
+  "private": true,
+  "scripts": {
+    "contracts:compile": "lerna run compile --scope=@nftree/contracts",
+    "contracts:migrate": "lerna run migrate --scope=@nftree/contracts",
+    "contracts:test": "lerna run test --scope=@nftree/contracts",
+    "frontend:start": "lerna run start --scope=@nftree/frontend",
+    "frontend:typecheck": "lerna run typecheck --scope=@nftree/frontend"
+  },
+  "devDependencies": {
+    "lerna": "^4.0.0"
+  },
+  "workspaces": ["packages/*"]
+}
