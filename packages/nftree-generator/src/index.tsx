@@ -25,7 +25,8 @@ function App() {
   const { ref, width, height }: { ref: any, width: number, height: number } = useDimensions({})
 
   const _onCanvasResize = (p5) => {
-    p5.resizeCanvas(width, height);
+    console.log('canvas resized')
+    // p5.resizeCanvas(width, height);
   };
 
   const mods = Object.keys(store.options).map((k) => {
@@ -43,21 +44,23 @@ function App() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <div style={{ flexGrow: 1 }}>
+        <h3>EthBlock.art P5.js boilerplate</h3>
         <div
           ref={ref}
           style={{
+            background: '#00F',
+            position: 'relative',
             margin: '0 auto',
             marginTop: '24px',
             width: '50vw',
             height: '50vw',
           }}
         >
-          <h3>EthBlock.art P5.js boilerplate</h3>
           {width && height ? (
             <CustomStyle
               width={width}
-              block={blocks[blockNumber]}
               height={height}
+              block={blocks[blockNumber]}
               canvasRef={canvasRef}
               attributesRef={attributesRef}
               handleResize={_onCanvasResize}

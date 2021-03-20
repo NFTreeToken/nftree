@@ -2,6 +2,29 @@ import React, { useRef } from 'react';
 import Sketch from 'react-p5';
 import MersenneTwister from 'mersenne-twister';
 import * as P5 from 'p5';
+import * as _ from 'lodash-es';
+
+import { getPricingData } from './thegraph';
+import { ETH_PRICE_DATA } from './prices';
+
+import tokenSVG_aETH from './images/aETH2.svg';
+import tokenPNG_aETH from './images/aETH.png';
+
+const SELECTED_TOKEN = 'WBTC';
+
+// fetch data from thegraph
+// (async function go() {
+//   const prices = await getPricingData(SELECTED_TOKEN, '2020-09-01', '2020-10-20');
+//   console.log(prices);
+// })();
+
+const START_DATE_ISO = '2020-12-10';
+const END_DATE_ISO = '2021-02-15';
+
+const priceData = _.filter(ETH_PRICE_DATA, (item) => (item.date > START_DATE_ISO && item.date <= END_DATE_ISO));
+console.log(priceData);
+
+let noiseZ = 0;
 
 
 /*
@@ -30,9 +53,10 @@ Getting started:
 
 const NUM_POINTS = 1000;
 
-let DEFAULT_SIZE = 500;
+const DEFAULT_SIZE = 3000;
 
 const SEED = Math.random();
+// const SEED = 10;
 
 const CustomStyle = ({
   block,
@@ -47,18 +71,38 @@ const CustomStyle = ({
   barkColor = '#FF0000',
   treeFillColor = '#00FF00',
   ringColor = '#0000FF',
-  wiggle = 0.02,
-  numRings = 30, // should be tied to length of investment? or maybe overall size
   scale = 1,
 }) => {
   const shuffleBag: any = useRef();
   const hoistedValue: any = useRef();
 
+  const TOKEN_LOGOS: Record<string, P5.Image> = {};
+
+  let canvas: P5.Renderer;
+
   // setup() initializes p5 and the canvas element, can be mostly ignored in our case (check draw())
-  const setup = (p5, canvasParentRef) => {
+  const setup = (p5: P5, canvasParentRef) => {
+    console.log('called setup')
+    console.log(canvasParentRef);
     // Keep reference of canvas element for snapshots
-    let _p5 = p5.createCanvas(width, height).parent(canvasParentRef);
-    canvasRef.current = p5;
+    canvas = p5.createCanvas(DEFAULT_SIZE, DEFAULT_SIZE).parent(canvasParentRef);
+    p5.pixelDensity(p5.displayDensity());
+    console.log('setting pixel density to: '+p5.displayDensity());
+    // _p5.style('display', 'block');
+    canvas.style('width', '100%');
+    canvas.style('height', '100%');
+
+    canvasRef.current = canvas;
+
+    p5.randomSeed(SEED);
+    p5.noiseSeed(SEED);
+
+    // p5.noLoop();
+    // setInterval(() => draw(p5), 1000);
+
+    // TOKEN_LOGOS.aETH = p5.loadImage(tokenSVG_aETH);
+    TOKEN_LOGOS.aETH = p5.loadImage(tokenPNG_aETH);
+    // console.log(TOKEN_LOGOS.aETH);
 
     attributesRef.current = () => {
       return {
@@ -92,24 +136,33 @@ const CustomStyle = ({
   // b) individual transactions in a block (seed)
   // c) custom parameters creators can customize (mod1, color1)
   // d) final drawing reacting to screen resizing (M)
+
+
+  let numFramesToShow = 1;
+
   const draw = (p5: P5) => {
-    let WIDTH = width;
-    let HEIGHT = height;
+    // if (drawn) return;
+    // drawn = true;
+    // let WIDTH = width;
+    // let HEIGHT = height;
+    const WIDTH = DEFAULT_SIZE;
+    const HEIGHT = DEFAULT_SIZE;
+
+    p5.fill(backgroundColor);
+    p5.rect(0,0,WIDTH, HEIGHT)
+
+    const XCENTER = WIDTH/2;
+    const YCENTER = HEIGHT/2;
     let DIM = Math.min(WIDTH, HEIGHT);
-    let M = DIM / DEFAULT_SIZE;
+    const IMAGE_SIZE_MULTIPLIER = .8;
+
+    let L = 0;
 
     // seed random number generator
     const blockHash: string = block.hash;
     let seed = parseInt(blockHash.substr(0, 16), 16);
     shuffleBag.current = new MersenneTwister(seed);
-    // let objs = block.transactions.map((t) => {
-    //   let seed = parseInt(t.hash.slice(0, 16), 16);
-    //   return {
-    //     y: shuffleBag.current.random(),
-    //     x: shuffleBag.current.random(),
-    //     radius: seed / 1000000000000000,
-    //   };
-    // });
+    // shuffleBag.current.random()
 
     // since the drawing is actually in a loop, we need to set a seed or it changes on each render
 
@@ -119,49 +172,97 @@ const CustomStyle = ({
     // p5.randomSeed(parseInt(`0x${blockHash.substr(2, 14)}`, 16));
     // p5.noiseSeed(parseInt(`0x${blockHash.substr(16, 14)}`, 16));
 
-    p5.randomSeed(SEED);
-    p5.noiseSeed(SEED);
+    // show framerate
+    const fps = p5.frameRate();
+    p5.fill(100);
+    p5.color('#FFF');
+    p5.textSize(50);
+    p5.text("FPS: " + fps.toFixed(0), 10, 100);
 
-
-
-
-    p5.background(backgroundColor);
 
     // create an graphics buffer to draw to, so we can apply effects to
     // before adding to the main canvas
     const ringsCanvas = p5.createGraphics(WIDTH, HEIGHT);
-    ringsCanvas.translate(WIDTH/2, HEIGHT/2);
+    ringsCanvas.translate(XCENTER, YCENTER);
+
+
+    ringsCanvas.noFill();
+    ringsCanvas.stroke('#FFF');
+    ringsCanvas.strokeWeight(2);
+
+    // draw first ring
+    let radius = 5;
+    drawRing(radius, 1, 0);
+
+    numFramesToShow++;
+    if (numFramesToShow > priceData.length) numFramesToShow = 1;
+
+    for (let i = 1; i < numFramesToShow; i++) {
+      const price = priceData[i].price;
+
+      const change = price / priceData[i-1].price;
+
+      let strokeWidth = 1;
+
+      if (change < 1) {
+        ringsCanvas.translate(1, -1);
+        radius += 10;
+      } else {
+        ringsCanvas.translate(2, 2);
+        radius += 12 + 40 * (change - 1);
+        strokeWidth = 2 + 40 * (change - 1);
+      }
+      // console.log(`$${price} [${change}] - R${radius} S${strokeWidth}`)
+      drawRing(radius, strokeWidth, i);
+    }
+
+    const barkThickness = radius * .05;
+
+    radius += barkThickness + 5
+    drawRing(radius, barkThickness, priceData.length, true);
+
 
     ringsCanvas.noStroke();
     ringsCanvas.fill(barkColor);
-    let radius = width * .42;
+    // let radius = WIDTH * .42;
 
-    // draw outermost ring (the bark)
-    drawRing(p5, ringsCanvas, radius);
+    // // draw outermost ring (the bark)
+    // drawRing(radius);
 
-    // draw fill inside of tree
-    radius = Math.floor(radius * .9);
-    ringsCanvas.fill(treeFillColor);
-    drawRing(p5, ringsCanvas, radius);
+    // // draw fill inside of tree
+    // radius = Math.floor(radius * .9);
+    // ringsCanvas.fill(treeFillColor);
+    // drawRing(radius);
 
-    // draw rings 1
-    for(var i = 0; i < numRings; i++){
-      radius = radius - (scale * 4) - (scale * p5.randomGaussian(0, 1));
-      if (radius < 0) break;
-      ringsCanvas.stroke(ringColor);
-      ringsCanvas.strokeWeight(1);
-      // ringsCanvas.strokeWeight(scale*(0.2+p5.random()))
-      drawRing(p5, ringsCanvas, radius, 0.01 * i);
-      // Z0 = Z0 + 0.03;
-    }
+    // draw the logo of the token
+    // ringsCanvas.imageMode('center');
+    // ringsCanvas.image(TOKEN_LOGOS.aETH, 0, 0, DIM * IMAGE_SIZE_MULTIPLIER, DIM * IMAGE_SIZE_MULTIPLIER)
+
+
+    // // draw rings 1
+    // ringsCanvas.noFill();
+    // for(var i = 0; i < numRings; i++){
+    //   radius = radius - (scale * 4) - (scale * p5.randomGaussian(0, 1));
+    //   if (radius < 0) break;
+    //   ringsCanvas.stroke(ringColor);
+    //   ringsCanvas.strokeWeight(1);
+    //   // ringsCanvas.strokeWeight(scale*(0.2+p5.random()))
+    //   drawRing(radius, 0.01 * i);
+    //   // Z0 = Z0 + 0.03;
+    // }
 
 
     // draw the buffer to the main canvas
     // TODO apply some more filters to add noise
     p5.image(ringsCanvas, 0, 0);
 
+    ringsCanvas.clear();
+    ringsCanvas.remove();
+
     // example assignment of hoisted value to be used as NFT attribute later
     hoistedValue.current = 42;
+
+
 
     // objs.map((dot, i) => {
     //   p5.stroke(color1);
@@ -172,24 +273,36 @@ const CustomStyle = ({
     //     dot.radius * M * mod1
     //   );
     // });
-  };
 
-  let L = 0;
-  function drawRing(p5, ringsCanvas, radius, Z0?) {
 
-    ringsCanvas.beginShape();
-    for(var i=0; i <= NUM_POINTS; i++){
-      const X0 = wiggle*(100 + radius * p5.cos(L));
-      const Y0 = wiggle*(100 + radius * p5.sin(L));
-      let _rad = radius + 50*p5.noise(X0,Y0,Z0);
-      const X = _rad*p5.cos(L);
-      const Y = _rad*p5.sin(L);
+    function drawRing(radius, weight, ringNumber, isFinal = false) {
+      ringsCanvas.strokeWeight(weight);
+      ringsCanvas.beginShape();
+      for(var i=0; i <= NUM_POINTS; i++){
+        // let _rad = radius + 50*p5.noise(X0,Y0,Z0);
+        let _rad = radius + 50 * p5.noise(
+          0.005*(radius * p5.cos(L)),
+          0.005*(radius * p5.sin(L)),
+          noiseZ + .02 * ringNumber
+        );
+        if (isFinal) {
+          _rad = radius + 50 * p5.noise(
+            0.02*(radius * p5.cos(L)),
+            0.02*(radius * p5.sin(L)),
+          );
+        }
 
-      p5.vertex(X, Y);
-      L = L + p5.TWO_PI/NUM_POINTS;
+
+        const X = _rad*p5.cos(L);
+        const Y = _rad*p5.sin(L);
+
+        p5.vertex(X, Y);
+        L = L + p5.TWO_PI/NUM_POINTS;
+      }
+      ringsCanvas.endShape();
     }
-    ringsCanvas.endShape();
-  }
+    noiseZ += .1;
+  };
 
   return <Sketch setup={setup} draw={draw} windowResized={handleResize} />;
 };

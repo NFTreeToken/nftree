@@ -17,6 +17,11 @@ const Sidebar = function ({
     toggleVisibility(!isVisible);
   };
 
+  const onRendererChange = (e) => {
+    console.log('renderer change')
+    handleRendererChange(e.target.value)
+  };
+
   return (
     <div className={`sidebar ${isVisible ? '' : 'hidden'}`}>
       <div className="toggle-button" onClick={handleToggleVisibility}>
@@ -27,7 +32,7 @@ const Sidebar = function ({
 
       <div className="section-header">Rendering</div>
       <div className="section-body">
-        <select value={renderer} onChange={(e) => handleRendererChange(e.target.value)}>
+        <select value={renderer} onChange={onRendererChange}>
           <option value='rings'>Rings</option>
           <option value='tree'>Tree</option>
         </select>
