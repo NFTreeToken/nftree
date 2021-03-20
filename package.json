@@ -3,7 +3,10 @@
   "private": true,
   "scripts": {
     "contracts:compile": "lerna run compile --scope=@nftree/contracts",
+    "contracts:exec": "lerna run exec --scope=@nftree/contracts",
+    "contracts:exec:kovan": "lerna run exec:kovan --scope=@nftree/contracts",
     "contracts:migrate": "lerna run migrate --scope=@nftree/contracts",
+    "contracts:migrate:kovan": "lerna run migrate:kovan --scope=@nftree/contracts",
     "contracts:test": "lerna run test --scope=@nftree/contracts",
     "frontend:start": "lerna run start --scope=@nftree/frontend",
     "frontend:typecheck": "lerna run typecheck --scope=@nftree/frontend"
