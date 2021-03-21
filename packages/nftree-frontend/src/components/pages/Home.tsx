@@ -2,7 +2,6 @@ import {
   Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Select, TextField,
 } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
@@ -12,11 +11,7 @@ import styled from 'styled-components';
 import { AAVE_TOKEN_ADDRESSES } from '../../data/constants';
 import { useCurrentAddress, usePlantSeed } from '../../hooks';
 import Page from '../lib/Page';
-
-const Spinner = styled(CircularProgress).attrs({ color: 'secondary' })`
-  display: block;
-  margin-top: 20px;
-`;
+import Spinner from '../lib/Spinner';
 
 const Home = () => {
   const currentAddress = useCurrentAddress();

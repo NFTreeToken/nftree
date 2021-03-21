@@ -3,14 +3,17 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import BackgroundSVG from '../../images/bg-mountains.svg';
+import { useIsChopped, useChopTree } from '../../hooks';
+import Spinner from '../lib/Spinner';
 import ForestRenderer from '../sketches/ForestRenderer';
 import RingsRenderer from '../sketches/RingsRenderer';
 
 const NFTree = () => {
-  const { tokenId }: { tokenId: string } = useParams();
+  const { tokenId: tokenIdString }: { tokenId: string } = useParams();
+  const tokenId = Number(tokenIdString);
+  const isChopped = useIsChopped(tokenId);
+  const [chopTree, pending] = useChopTree(tokenId);
 
-  const chopped = false;
   const isMine = true;
 
   return (
@@ -18,7 +21,7 @@ const NFTree = () => {
       <Typography>{`NFTree id: ${tokenId}`}</Typography>
 
       <div className="render-wrapper">
-        {chopped ? <RingsRenderer /> : <ForestRenderer />}
+        {isChopped ? <RingsRenderer /> : <ForestRenderer />}
       </div>
       <div>
         Current Owner: 0xabc
@@ -31,7 +34,7 @@ const NFTree = () => {
       <div>Watered Amount: .5 ($132.23 US)</div>
       <div>Asset price when planted: $567.23 US</div>
 
-      {chopped && (
+      {isChopped && (
         <>
           <div>Chopped on: Block #222</div>
           <div>Asset price when chopped: $1567.23 US</div>
@@ -41,13 +44,14 @@ const NFTree = () => {
 
       {/* actions */}
       <div style={{ border: '1px solid black' }}>
-        {!chopped && <button>Water this tree</button>}
+        {!isChopped && <button>Water this tree</button>}
 
         {isMine && (
           <>
-            {!chopped && <button>Chop down this tree</button>}
+            {!isChopped && <button onClick={() => chopTree()}>Chop down this tree</button>}
             <button>Gift to someone else</button>
             <button>Sell on Rarible</button>
+            {pending && <Spinner />}
           </>
         )}
       </div>
