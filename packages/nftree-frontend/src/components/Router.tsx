@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
-import Dashboard from './pages/Dashboard';
 import Forest from './pages/Forest';
+import Home from './pages/Home';
 import NFTree from './pages/NFTree';
 
 const Router = () => (
@@ -15,7 +15,7 @@ const Router = () => (
         <NFTree />
       </Route>
       <Route path="/">
-        <Dashboard />
+        <Home />
       </Route>
     </Switch>
   </BrowserRouter>

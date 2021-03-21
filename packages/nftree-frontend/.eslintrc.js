@@ -9,5 +9,6 @@ module.exports = {
     'max-len': 1,
     '@typescript-eslint/no-use-before-define': 0,
     'jsx-a11y/alt-text': 0,
+    'react/button-has-type': 0,
   },
 };

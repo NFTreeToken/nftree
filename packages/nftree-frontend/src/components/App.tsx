@@ -2,6 +2,7 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import React from 'react';
+import { BrowserRouter, Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useDrizzleInitialized } from '../hooks';
@@ -15,9 +16,15 @@ const App = () => {
       {!initialized && <LinearProgress />}
 
       <div className="header-bar">
-        <a href="/" className="logo">
+
+        {/* <a href="/" className="logo">
           <img src={logo} />
-        </a>
+          NFTree
+        </a> */}
+
+        <a href="/">home</a>
+        <a href="/nftree/123">Tree 123</a>
+        <a href="/forest/123">Wallet 123</a>
       </div>
 
       {initialized && <Router />}
