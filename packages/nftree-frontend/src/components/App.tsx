@@ -1,10 +1,10 @@
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import Typography from '@material-ui/core/Typography';
 import React from 'react';
 
 import { useDrizzleInitialized } from '../hooks';
+import Router from './Router';
 
 const App = () => {
   const initialized = useDrizzleInitialized();
@@ -14,7 +14,7 @@ const App = () => {
       <Container>
         <Grid container>
           <Grid item xs={12}>
-            {initialized && <Typography>Ready</Typography>}
+            {initialized && <Router />}
           </Grid>
         </Grid>
       </Container>
