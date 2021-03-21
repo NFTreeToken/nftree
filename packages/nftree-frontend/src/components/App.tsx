@@ -1,62 +1,32 @@
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
+import AppBar from '@material-ui/core/AppBar';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import ToolBar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 import React from 'react';
-import { BrowserRouter, Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useDrizzleInitialized } from '../hooks';
 import logo from '../images/logo.png';
 import Router from './Router';
 
+const Logo = styled.img`
+  margin: 10px 10px 10px 0;
+  height: 100px;
+`;
+
 const App = () => {
   const initialized = useDrizzleInitialized();
   return (
-    <StyledWrapper>
-      {!initialized && <LinearProgress />}
-
-      <div className="header-bar">
-
-        {/* <a href="/" className="logo">
-          <img src={logo} />
-          NFTree
-        </a> */}
-
-        <a href="/">home</a>
-        <a href="/nftree/123">Tree 123</a>
-        <a href="/forest/123">Wallet 123</a>
-      </div>
-
-      {initialized && <Router />}
-      {/* <Container>
-        <Grid container>
-          <Grid item xs={12}>
-
-          </Grid>
-        </Grid>
-      </Container> */}
-
-    </StyledWrapper>
+    <>
+      <AppBar position="static">
+        <ToolBar>
+          <Logo src={logo} />
+          <Typography variant="h3" component="h1">NFTree</Typography>
+        </ToolBar>
+      </AppBar>
+      {initialized ? <Router /> : <LinearProgress />}
+    </>
   );
 };
-
-const StyledWrapper = styled.div`
-  .logo {
-    display: block;
-    height: 100%;
-    img {
-      display: block;
-      max-height: 100%;
-    }
-  }
-  .header-bar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: 100px;
-    background: red;
-    z-index: 100;
-  }
-`;
 
 export default App;
