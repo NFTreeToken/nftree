@@ -10,5 +10,6 @@ module.exports = {
     '@typescript-eslint/no-use-before-define': 0,
     'jsx-a11y/alt-text': 0,
     'react/button-has-type': 0,
+    'react/no-unescaped-entities': 0,
   },
 };

@@ -15,7 +15,7 @@ const Forest = () => {
       <Typography>{`Wallet id: ${walletId}`}</Typography>
 
       <div className="forest-wrapper">
-        <ForestRenderer />
+        <ForestRenderer forestMode />
       </div>
 
     </StyledWrapper>
@@ -41,15 +41,6 @@ const StyledWrapper = styled.div`
     position: absolute;
     z-index: 1;
     bottom: 0;
-  }
-
-
-  .rings-container, .forest-container {
-    width: 800px;
-    height: 800px;
-    position: relative;
-    float: left;
-    margin-right: 10px;
   }
 `;
 
