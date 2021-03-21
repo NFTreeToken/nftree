@@ -2,12 +2,14 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
+import range from 'lodash/range';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useTreeCount } from '../../hooks';
 import BackgroundSVG from '../../images/bg-mountains.svg';
+import TokenLink from '../lib/TokenLink';
 import ForestRenderer from '../sketches/ForestRenderer';
 
 const Forest = () => {
@@ -26,8 +28,12 @@ const Forest = () => {
             <TableCell>{walletId}</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>NFTrees owned</TableCell>
-            <TableCell>{treeCount}</TableCell>
+            <TableCell>{`NFTrees owned (${treeCount})`}</TableCell>
+            <TableCell>
+              {range(treeCount).map((n) => (
+                <TokenLink ownerAddress={walletId} index={n} />
+              ))}
+            </TableCell>
           </TableRow>
         </TableBody>
       </Table>

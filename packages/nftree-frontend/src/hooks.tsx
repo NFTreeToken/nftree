@@ -8,6 +8,8 @@ const {
   useDrizzleState,
 } = drizzleReactHooks;
 
+const getPending = (TXObjects: object[]) => !every(TXObjects, { status: 'success' });
+
 const useUseCacheCall = () => {
   const { useCacheCall } = useDrizzle();
   return useCacheCall;
@@ -27,6 +29,11 @@ export const useCurrentAddress = () => useDrizzleState(
   ({ accounts }: { accounts: string[] }) => accounts[0],
 );
 
+export const useTreeIdAt = (ownerAddress: string, index: number) => {
+  const useCacheCall = useUseCacheCall();
+  return useCacheCall(NFTREE, 'tokenIdAt', ownerAddress, index);
+};
+
 export const useTreeCount = (walletAddress: string) => {
   const useCacheCall = useUseCacheCall();
   return useCacheCall(NFTREE, 'balanceOf', walletAddress);
@@ -35,7 +42,7 @@ export const useTreeCount = (walletAddress: string) => {
 export const usePlantSeed = () => {
   const useCacheSend = useUseCacheSend();
   const { send: plantSeed, TXObjects } = useCacheSend(NFTREE, 'plantSeed');
-  const pending = !every(TXObjects, { status: 'success' });
+  const pending = getPending(TXObjects);
   return [plantSeed, pending];
 };
 
