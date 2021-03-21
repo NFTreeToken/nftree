@@ -1,11 +1,12 @@
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
+import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import styled from 'styled-components';
 
-import { usePlantSeed } from '../../hooks';
+import { useCurrentAddress, usePlantSeed } from '../../hooks';
 import Page from '../lib/Page';
 
 const Spinner = styled(CircularProgress).attrs({ color: 'secondary' })`
@@ -14,7 +15,9 @@ const Spinner = styled(CircularProgress).attrs({ color: 'secondary' })`
 `;
 
 const Home = () => {
+  const currentAddress = useCurrentAddress();
   const [plantSeed, pending] = usePlantSeed();
+
   return (
     <Page>
       <Grid item xs={12}>
@@ -27,6 +30,8 @@ const Home = () => {
           Plant an NFTree
         </Button>
         {pending && <Spinner />}
+
+        <Link href={`/forest/${currentAddress}`}>See my forest</Link>
 
         <h2>What is this?</h2>
         <p>
