@@ -8,3 +8,8 @@
 [build]
   command = "yarn frontend:build"
   publish = "packages/nftree-frontend/build"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
