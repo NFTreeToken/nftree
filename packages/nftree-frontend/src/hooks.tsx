@@ -34,6 +34,11 @@ export const useTreeIdAt = (ownerAddress: string, index: number) => {
   return useCacheCall(NFTREE, 'tokenIdAt', ownerAddress, index);
 };
 
+export const useIsChopped = (tokenId: number) => {
+  const useCacheCall = useUseCacheCall();
+  return useCacheCall(NFTREE, 'isChopped', tokenId);
+};
+
 export const useTreeCount = (walletAddress: string) => {
   const useCacheCall = useUseCacheCall();
   return useCacheCall(NFTREE, 'balanceOf', walletAddress);
@@ -44,6 +49,13 @@ export const usePlantSeed = () => {
   const { send: plantSeed, TXObjects } = useCacheSend(NFTREE, 'plantSeed');
   const pending = getPending(TXObjects);
   return [plantSeed, pending];
+};
+
+export const useChopTree = (tokenId: number) => {
+  const useCacheSend = useUseCacheSend();
+  const { send: chopTree, TXObjects } = useCacheSend(NFTREE, 'chopTree', tokenId);
+  const pending = getPending(TXObjects);
+  return [chopTree, pending];
 };
 
 export const useDrizzleInitialized = () => useDrizzleState(
