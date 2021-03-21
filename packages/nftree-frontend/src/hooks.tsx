@@ -1,15 +1,17 @@
 import { drizzleReactHooks } from '@drizzle/react-plugin';
 import every from 'lodash/every';
 
+const NFTREE = 'NFTreeDemo';
+
 const {
   useDrizzle,
   useDrizzleState,
 } = drizzleReactHooks;
 
-// const useUseCacheCall = () => {
-//   const { useCacheCall } = useDrizzle();
-//   return useCacheCall;
-// };
+const useUseCacheCall = () => {
+  const { useCacheCall } = useDrizzle();
+  return useCacheCall;
+};
 
 const useUseCacheSend = () => {
   const { useCacheSend } = useDrizzle();
@@ -21,9 +23,18 @@ const useUseCacheSend = () => {
 //   return useCacheEvents;
 // };
 
+export const useCurrentAddress = () => useDrizzleState(
+  ({ accounts }: { accounts: string[] }) => accounts[0],
+);
+
+export const useTreeCount = (walletAddress: string) => {
+  const useCacheCall = useUseCacheCall();
+  return useCacheCall(NFTREE, 'balanceOf', walletAddress);
+};
+
 export const usePlantSeed = () => {
   const useCacheSend = useUseCacheSend();
-  const { send: plantSeed, TXObjects } = useCacheSend('NFTreeDemo', 'plantSeed');
+  const { send: plantSeed, TXObjects } = useCacheSend(NFTREE, 'plantSeed');
   const pending = !every(TXObjects, { status: 'success' });
   return [plantSeed, pending];
 };
