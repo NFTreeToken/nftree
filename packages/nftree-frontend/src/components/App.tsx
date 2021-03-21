@@ -20,7 +20,7 @@ const App = () => {
     <>
       <AppBar position="static">
         <ToolBar>
-          <Logo src={logo} />
+          <a href="/"><Logo src={logo} alt="NFTrees" /></a>
           <Typography variant="h3" component="h1">NFTree</Typography>
         </ToolBar>
       </AppBar>
