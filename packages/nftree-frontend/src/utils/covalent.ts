@@ -10,24 +10,22 @@ const covalentApi = Axios.create({
   // }
 });
 
-
 covalentApi.interceptors.request.use((config) => {
   config.params = config.params || {};
-  config.params.key = API_KEY
+  config.params.key = API_KEY;
   return config;
 });
 
 export async function getTokenPriceData(
   tokenSymbol: string,
   startDateISO: string,
-  endDateISO:string
+  endDateISO:string,
 ) {
-
   // TODO allow fetching in different currency?
   const result = await covalentApi({
     method: 'get',
     url: `pricing/historical/USD/${tokenSymbol}/`,
-    params: { from: startDateISO, to: endDateISO }
+    params: { from: startDateISO, to: endDateISO },
   });
   return result.data.prices;
 }
