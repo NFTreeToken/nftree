@@ -1,13 +1,17 @@
 import Typography from '@material-ui/core/Typography';
+import * as _ from 'lodash';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useOwnerOf, useIsChopped, useChopTree } from '../../hooks';
+import { useBlockDate, usePriceData } from '../../utils/covalent';
 import { getTreeMetadata } from '../../utils/fake-tree-metadata';
 import Spinner from '../lib/Spinner';
 import ForestRenderer from '../sketches/ForestRenderer';
 import RingsRenderer from '../sketches/RingsRenderer';
+
+const TODAY_ISO = new Date().toISOString().substr(0, 10);
 
 const NFTree = () => {
   const { tokenId: tokenIdString }: { tokenId: string } = useParams();
@@ -19,6 +23,19 @@ const NFTree = () => {
   const isMine = true;
 
   const treeMetadata = getTreeMetadata(tokenId);
+
+  const [depositBlockDate, depositBlockDateIsLoading] = useBlockDate(treeMetadata.depositBlock);
+  const [priceData, priceDataIsLoading] = usePriceData(treeMetadata.symbol, depositBlockDate, TODAY_ISO);
+
+  let depositDatePriceUSD;
+  let depositAmountUSD;
+  let chopDatePriceUSD;
+  let chopAmountUSD;
+  if (priceData) {
+    console.log('PRICES', priceData);
+    depositDatePriceUSD = _.find(priceData as any, { date: depositBlockDate }).price;
+    depositAmountUSD = depositDatePriceUSD * treeMetadata.depositAmount;
+  }
 
   return (
     <StyledWrapper>
@@ -34,6 +51,9 @@ const NFTree = () => {
       <div>
         Planted on: Block #
         {treeMetadata.depositBlock}
+        (
+        {depositBlockDateIsLoading ? '-' : depositBlockDate}
+        )
       </div>
       <div>
         Asset:
@@ -42,14 +62,22 @@ const NFTree = () => {
       <div>
         Initial Deposit:
         {treeMetadata.depositAmount.toFixed(5)}
-        ($432.23 US)
+        ($
+        {depositAmountUSD ? depositAmountUSD.toFixed(2) : '-'}
+        {' '}
+        USD)
       </div>
       <div>
         Watered Count:
         {treeMetadata.numWaterings}
         times
       </div>
-      <div>Asset price when planted: $567.23 US</div>
+      <div>
+        Asset price when planted: $
+        {depositDatePriceUSD || '-'}
+        {' '}
+        USD
+      </div>
 
       {isChopped && (
         <>

@@ -15,8 +15,6 @@ import { getPricingData } from '../../utils/thegraph';
 
 const SELECTED_TOKEN = 'WBTC';
 
-getTokenPriceData('WBTC', '2020-01-01', '2020-02-15');
-
 // fetch data from thegraph
 // (async function go() {
 //   const prices = await getPricingData(SELECTED_TOKEN, '2020-09-01', '2020-10-20');
