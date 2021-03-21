@@ -144,7 +144,7 @@ const CustomStyle = ({
         'btc': {color: 111}
       }
       const startingColor = tokenToConfig[tokenSymbol].color
-      branch(width/2, height, p5.radians(-90), startingBranchHeight, startingBranchWeight, 20, startingColor)
+      branch(width/2, height, p5.radians(-90), startingBranchHeight, startingBranchWeight, 10, startingColor)
     }
 
     function branch(startX, startY, branchAngle, branchLength, branchWeight, twigSteps, branchColor) {
