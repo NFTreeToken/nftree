@@ -1,4 +1,5 @@
 node_modules
+packages/nftree-frontend/build
 
 design
 
@@ -8,6 +9,5 @@ yarn-debug.log*
 yarn-error.log*
 
 .DS_Store
-
-packages/nftree-frontend/build
-
+.vscode
+.env

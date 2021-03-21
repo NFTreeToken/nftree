@@ -6,7 +6,10 @@
   "scripts": {
     "lint": "eslint .",
     "compile": "truffle compile",
+    "exec": "truffle exec",
+    "exec:kovan": "truffle exec --network=kovan",
     "migrate": "truffle migrate",
+    "migrate:kovan": "truffle migrate --network=kovan",
     "test": "truffle test"
   },
   "devDependencies": {
@@ -24,6 +27,10 @@
     "truffle": "^5.2.4"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^3.4.1"
+    "@charged-particles/universe": "https://github.com/Charged-Particles/charged-particles-universe.git",
+    "@opengsn/gsn": "^2.0.1",
+    "@openzeppelin/contracts": "^3.4.1",
+    "dotenv": "^8.2.0",
+    "truffle-privatekey-provider": "^1.5.0"
   }
 }
