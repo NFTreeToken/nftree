@@ -9,7 +9,7 @@
     "contracts:test": "lerna run test --scope=@nftree/contracts",
     "frontend:start": "lerna run start --scope=@nftree/frontend",
     "frontend:typecheck": "lerna run typecheck --scope=@nftree/frontend",
-    "frontend:build": "lerna run build --scope=@nftree/frontend",
+    "frontend:build": "CI='' lerna run build --scope=@nftree/frontend",
     "generator:start": "lerna run start --scope=@nftree/generator"
   },
   "devDependencies": {
