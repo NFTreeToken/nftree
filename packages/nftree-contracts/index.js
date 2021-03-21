@@ -1,3 +1,3 @@
-const NFTree = require('./build/contracts/NFTreeDemo.json');
+const NFTreeDemo = require('./build/contracts/NFTreeDemo.json');
 
-module.exports = { NFTree };
+module.exports = { NFTreeDemo };

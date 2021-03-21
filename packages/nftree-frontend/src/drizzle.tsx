@@ -1,9 +1,9 @@
 import { Drizzle, generateStore } from '@drizzle/store';
-// import { ... } from '@nftree/contracts';
+import { NFTreeDemo } from '@nftree/contracts';
 
 const options = {
   contracts: [
-    // Imported contracts
+    NFTreeDemo,
   ],
   web3: {
     fallback: {
