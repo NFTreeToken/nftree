@@ -11,5 +11,6 @@ module.exports = {
     'jsx-a11y/alt-text': 0,
     'react/button-has-type': 0,
     'react/no-unescaped-entities': 0,
+    'react/prop-types': 0,
   },
 };
