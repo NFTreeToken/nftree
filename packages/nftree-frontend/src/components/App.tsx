@@ -1,38 +1,54 @@
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import styled from 'styled-components';
 
 import { useDrizzleInitialized } from '../hooks';
-import RingsRenderer from './sketches/RingsRenderer';
+import logo from '../images/logo.png';
+import Router from './Router';
 
 const App = () => {
   const initialized = useDrizzleInitialized();
   return (
     <StyledWrapper>
       {!initialized && <LinearProgress />}
-      <Container>
+
+      <div className="header-bar">
+        <a href="/" className="logo">
+          <img src={logo} />
+        </a>
+      </div>
+
+      {initialized && <Router />}
+      {/* <Container>
         <Grid container>
           <Grid item xs={12}>
-            {initialized && <Typography>Ready</Typography>}
-            <div className="ringsContainer">
-              <RingsRenderer />
-            </div>
 
           </Grid>
         </Grid>
-      </Container>
+      </Container> */}
+
     </StyledWrapper>
   );
 };
 
 const StyledWrapper = styled.div`
-  .ringsContainer {
-    width: 500px;
-    height: 500px;
-    position: relative;
+  .logo {
+    display: block;
+    height: 100%;
+    img {
+      display: block;
+      max-height: 100%;
+    }
+  }
+  .header-bar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100px;
+    background: red;
+    z-index: 100;
   }
 `;
 

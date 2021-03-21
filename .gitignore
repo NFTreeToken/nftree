@@ -2,6 +2,7 @@ node_modules
 packages/nftree-frontend/build
 
 design
+TODO
 
 lerna-debug.log*
 npm-debug.log*

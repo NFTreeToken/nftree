@@ -91,9 +91,6 @@ const RingsRenderer = ({
     //   canvasRef.current = canvas;
     // }
 
-    p5.randomSeed(SEED);
-    p5.noiseSeed(SEED);
-
     // p5.noLoop();
     // setInterval(() => draw(p5), 1000);
 
@@ -135,6 +132,8 @@ const RingsRenderer = ({
   let numFramesToShow = 1;
 
   const draw = (p5: P5) => {
+    p5.randomSeed(SEED);
+    p5.noiseSeed(SEED);
     // if (drawn) return;
     // drawn = true;
     // let WIDTH = width;
@@ -250,7 +249,6 @@ const RingsRenderer = ({
     // TODO apply some more filters to add noise
     p5.image(ringsCanvas, 0, 0);
 
-    ringsCanvas.clear();
     ringsCanvas.remove();
 
     // objs.map((dot, i) => {
