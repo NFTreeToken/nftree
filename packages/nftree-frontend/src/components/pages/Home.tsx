@@ -5,6 +5,7 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
+import PropTypes, { InferProps } from 'prop-types';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
@@ -13,21 +14,27 @@ import { useCurrentAddress, usePlantSeed } from '../../hooks';
 import Page from '../lib/Page';
 import Spinner from '../lib/Spinner';
 
-const Home = () => {
-  const currentAddress = useCurrentAddress();
-  const [plantSeed, pending] = usePlantSeed();
-  const [plantPopupIsOpen, setPlantPopupIsOpen] = useState(false);
+const PlantButton = styled(Button)`
+  margin-bottom: 10px;
+`;
+
+const Section = styled.div`
+  margin-bottom: 50px;
+`;
+
+const plantDialogPropTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  close: PropTypes.func.isRequired,
+  tryPlant: PropTypes.func.isRequired,
+};
+
+const PlantDialog = ({ isOpen, close, tryPlant }: InferProps<typeof plantDialogPropTypes>) => {
   const [newTreeAssetType, setNewTreeAssetType] = useState('WETH');
   const [newTreeAssetAmount, setNewTreeAssetAmount] = useState(1);
   const [newTreeName, setNewTreeName] = useState('');
 
-  function tryPlant() {
-    plantSeed();
-    setPlantPopupIsOpen(false);
-  }
-
-  const PlantDialog = () => (
-    <Dialog open={plantPopupIsOpen} onClose={() => setPlantPopupIsOpen(false)} aria-labelledby="form-dialog-title">
+  return (
+    <Dialog open={isOpen} onClose={close} aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">Plant an NFTree</DialogTitle>
       <DialogContent>
         <DialogContentText>
@@ -68,7 +75,7 @@ const Home = () => {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setPlantPopupIsOpen(false)} color="primary">
+        <Button onClick={close} color="primary">
           Cancel
         </Button>
         <Button onClick={() => tryPlant()} color="primary">
@@ -77,52 +84,76 @@ const Home = () => {
       </DialogActions>
     </Dialog>
   );
+};
+
+PlantDialog.propTypes = plantDialogPropTypes;
+
+const Home = () => {
+  const currentAddress = useCurrentAddress();
+  const [plantSeed, pending] = usePlantSeed();
+  const [plantPopupIsOpen, setPlantPopupIsOpen] = useState(false);
+
+  function tryPlant() {
+    plantSeed();
+    setPlantPopupIsOpen(false);
+  }
 
   return (
     <Page>
       <Grid item xs={12}>
-        <Typography paragraph>Welcome to NFTree</Typography>
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={() => setPlantPopupIsOpen(true)}
-        >
-          Plant an NFTree
-        </Button>
-        <PlantDialog />
-        {pending && <Spinner />}
+        <Section>
+          <Typography variant="h4" component="h2" paragraph>Welcome to NFTree</Typography>
+          <PlantButton
+            color="primary"
+            variant="contained"
+            onClick={() => setPlantPopupIsOpen(true)}
+          >
+            Plant an NFTree
+          </PlantButton>
 
-        <Link href={`/forest/${currentAddress}`}>See my forest</Link>
+          <PlantDialog
+            isOpen={plantPopupIsOpen}
+            close={() => setPlantPopupIsOpen(false)}
+            tryPlant={tryPlant}
+          />
+          {pending && <Spinner />}
 
-        <h2>What is this?</h2>
-        <p>
-          This project allows users to save and invest crypto in a fun new way and create NFT art at the same time.
-          <ul>
-            <li>
-              <b>Plant an NFTree</b>
-              - mint a new NFT that holds your funds and invests them in DeFI assets
-            </li>
-            <li>
-              <b>Water your NFTrees</b>
-              - deposit more funds into an NFTree to save and earn even more interest
+          <Typography variant="body2" paragraph>
+            Already own NFTrees?&nbsp;
+            <Link href={`/forest/${currentAddress}`} color="secondary">View your forest</Link>
+          </Typography>
+        </Section>
+        <Section>
+          <Typography variant="h4" paragraph component="h2">What is this?</Typography>
+          <Typography>
+            This project allows users to save and invest crypto in a fun new way and create NFT art at the same time.
+            <ul>
+              <li>
+                <b>Plant an NFTree</b>
+                - mint a new NFT that holds your funds and invests them in DeFI assets
+              </li>
+              <li>
+                <b>Water your NFTrees</b>
+                - deposit more funds into an NFTree to save and earn even more interest
 
-            </li>
-            <li>
-              <b>View your NFTree forest</b>
-              - view all of your active investments as a beautiful forest of growing trees
+              </li>
+              <li>
+                <b>View your NFTree forest</b>
+                - view all of your active investments as a beautiful forest of growing trees
 
-            </li>
-            <li>
-              <b>Chop down an NFTree</b>
-              - chop down the tree to retrieve your funds and reveal the final form of the NFT
-            </li>
-          </ul>
+              </li>
+              <li>
+                <b>Chop down an NFTree</b>
+                - chop down the tree to retrieve your funds and reveal the final form of the NFT
+              </li>
+            </ul>
 
-          While your trees are growing, they can be viewed in our wallet renderer which shows all of your NFTrees, however you cannot view a single tree's NFT art as it still growing. Once you cut down an NFTree, the actual NFT art is created. Both a static rendering of the tree's rings that are tied to the growth of your investment, as well as an animation showing the growth progression over time.
+            While your trees are growing, they can be viewed in our wallet renderer which shows all of your NFTrees, however you cannot view a single tree's NFT art as it still growing. Once you cut down an NFTree, the actual NFT art is created. Both a static rendering of the tree's rings that are tied to the growth of your investment, as well as an animation showing the growth progression over time.
 
-          Users can of course buy/sell/trade their NFTrees before or after they have been cut down, for the actual value of invested as well as the speculative value of the unique art it will (or already did) turn into.
+            Users can of course buy/sell/trade their NFTrees before or after they have been cut down, for the actual value of invested as well as the speculative value of the unique art it will (or already did) turn into.
 
-        </p>
+          </Typography>
+        </Section>
       </Grid>
     </Page>
   );

@@ -3,7 +3,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { useIsChopped, useChopTree } from '../../hooks';
+import { useOwnerOf, useIsChopped, useChopTree } from '../../hooks';
 import { getTreeMetadata } from '../../utils/fake-tree-metadata';
 import Spinner from '../lib/Spinner';
 import ForestRenderer from '../sketches/ForestRenderer';
@@ -12,6 +12,7 @@ import RingsRenderer from '../sketches/RingsRenderer';
 const NFTree = () => {
   const { tokenId: tokenIdString }: { tokenId: string } = useParams();
   const tokenId = Number(tokenIdString);
+  const ownerOf = useOwnerOf(tokenId);
   const isChopped = useIsChopped(tokenId);
   const [chopTree, pending] = useChopTree(tokenId);
 
@@ -27,8 +28,8 @@ const NFTree = () => {
         {isChopped ? <RingsRenderer /> : <ForestRenderer />}
       </div>
       <div>
-        Current Owner: 0xabc
-        <a href="/forest/0xabc">see their forest</a>
+        {`Current Owner: ${ownerOf}`}
+        <a href={`/forest/${ownerOf}`}>see their forest</a>
       </div>
       <div>
         Planted on: Block #
