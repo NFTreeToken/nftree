@@ -93,8 +93,6 @@ contract NFTree is ERC721 {
     );
 
     _trees[tokenId].isChopped = true;    
-    _burn(tokenId);
-
     _CP.dischargeParticle(
       owner,
       address(this),
@@ -102,6 +100,7 @@ contract NFTree is ERC721 {
       tree.walletManagerId,
       tree.assetToken
     );
+    _burn(tokenId);
 
     ChopTree(tokenId, owner, tree.walletManagerId, tree.assetToken, tree.assetAmount);
   }
