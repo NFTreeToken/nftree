@@ -56,9 +56,9 @@ export const usePlantSeed = () => {
   return [plantSeed, pending];
 };
 
-export const useChopTree = (tokenId: number) => {
+export const useChopTree = () => {
   const useCacheSend = useUseCacheSend();
-  const { send: chopTree, TXObjects } = useCacheSend(NFTREE, 'chopTree', tokenId);
+  const { send: chopTree, TXObjects } = useCacheSend(NFTREE, 'chopTree');
   const pending = getPending(TXObjects);
   return [chopTree, pending];
 };

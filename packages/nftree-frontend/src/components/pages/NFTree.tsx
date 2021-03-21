@@ -18,7 +18,7 @@ const NFTree = () => {
   const tokenId = Number(tokenIdString);
   const ownerOf = useOwnerOf(tokenId);
   const isChopped = useIsChopped(tokenId) || window?.location?.search === '?chop';
-  const [chopTree, pending] = useChopTree(tokenId);
+  const [chopTree, pending] = useChopTree();
 
   const isMine = true;
 
@@ -96,14 +96,14 @@ const NFTree = () => {
 
         {isMine && (
           <>
-            {!isChopped && <button onClick={() => chopTree()}>Chop down this tree</button>}
+            {!isChopped && <button onClick={() => chopTree(tokenId)}>Chop down this tree</button>}
             <button>Gift to someone else</button>
             <button>Sell on Rarible</button>
-            {pending && <Spinner />}
           </>
         )}
       </div>
 
+      {pending && <Spinner />}
     </StyledWrapper>
   );
 };

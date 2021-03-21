@@ -16,6 +16,10 @@ import { useSuperrareProfile } from '../../utils/superrare';
 import TokenLink from '../lib/TokenLink';
 import ForestRenderer from '../sketches/ForestRenderer';
 
+const DataTable = styled(Table)`
+  z-index: 100;
+`;
+
 const Forest = () => {
   const { walletId }: { walletId: string } = useParams();
   const treeCount = useTreeCount(walletId);
@@ -28,7 +32,7 @@ const Forest = () => {
     <StyledWrapper>
       <img src={BackgroundSVG} className="bg" />
 
-      <Table>
+      <DataTable>
         <TableBody>
           <TableRow>
             <TableCell>Wallet address</TableCell>
@@ -43,7 +47,7 @@ const Forest = () => {
             </TableCell>
           </TableRow>
         </TableBody>
-      </Table>
+      </DataTable>
 
       <div className="forest-wrapper">
         {srProfile && (
