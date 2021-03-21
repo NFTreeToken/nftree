@@ -41,14 +41,10 @@ const CustomStyle = ({
   width,
   height,
   handleResize,
-  mod1 = 0.75, // Example: replace any number in the code with mod1, mod2, or color values
-  mod2 = 0.25,
-  backgroundColor = '#222',
-  barkColor = '#FF00FF',
+  mod1, // Example: replace any number in the code with mod1, mod2, or color values
+  mod2,
+  backgroundColor = '#ccc',
   treeFillColor = '#00FF00',
-  ringColor = '#0000FF',
-  wiggle = 0.02,
-  numRings = 30, // should be tied to length of investment? or maybe overall size
   scale = 1,
 }) => {
   const shuffleBag: any = useRef();
@@ -93,15 +89,24 @@ const CustomStyle = ({
   // c) custom parameters creators can customize (mod1, color1)
   // d) final drawing reacting to screen resizing (M)
   const draw = (p5: P5) => {
-    let WIDTH = width;
-    let HEIGHT = height;
+
+    const WIDTH = DEFAULT_SIZE;
+    const HEIGHT = DEFAULT_SIZE;
+
     let DIM = Math.min(WIDTH, HEIGHT);
     let M = DIM / DEFAULT_SIZE;
+
+    p5.fill(backgroundColor);
+    p5.rect(0,0,WIDTH, HEIGHT)
+
+    const XCENTER = WIDTH/2;
+    const YCENTER = HEIGHT/2;
+    
 
     // seed random number generator
     const blockHash: string = block.hash;
     let seed = parseInt(blockHash.substr(0, 16), 16);
-    shuffleBag.current = new MersenneTwister(seed);
+    const pesudoRandomGen = shuffleBag.current = new MersenneTwister(seed);
     // let objs = block.transactions.map((t) => {
     //   let seed = parseInt(t.hash.slice(0, 16), 16);
     //   return {
@@ -119,46 +124,90 @@ const CustomStyle = ({
     // p5.randomSeed(parseInt(`0x${blockHash.substr(2, 14)}`, 16));
     // p5.noiseSeed(parseInt(`0x${blockHash.substr(16, 14)}`, 16));
 
-    p5.randomSeed(SEED);
-    p5.noiseSeed(SEED);
+    p5.randomSeed(seed);
+    p5.noiseSeed(seed);
 
 
-
-
+    const treeCanvas = p5.createGraphics(WIDTH, HEIGHT);
+    treeCanvas.translate(XCENTER, YCENTER);
+    treeCanvas.noFill();
     p5.background(backgroundColor);
+    
 
-    // create an graphics buffer to draw to, so we can apply effects to
-    // before adding to the main canvas
-    const ringsCanvas = p5.createGraphics(WIDTH, HEIGHT);
-    ringsCanvas.translate(WIDTH/2, HEIGHT/2);
+    drawNFTree(mod1, 'btc')
 
-    ringsCanvas.noStroke();
-    ringsCanvas.fill(barkColor);
-    let radius = width * .42;
-
-    // draw outermost ring (the bark)
-    drawRing(p5, ringsCanvas, radius);
-
-    // draw fill inside of tree
-    radius = Math.floor(radius * .9);
-    ringsCanvas.fill(treeFillColor);
-    drawRing(p5, ringsCanvas, radius);
-
-    // draw rings 1
-    for(var i = 0; i < numRings; i++){
-      radius = radius - (scale * 4) - (scale * p5.randomGaussian(0, 1));
-      if (radius < 0) break;
-      ringsCanvas.stroke(ringColor);
-      ringsCanvas.strokeWeight(1);
-      // ringsCanvas.strokeWeight(scale*(0.2+p5.random()))
-      drawRing(p5, ringsCanvas, radius, 0.01 * i);
-      // Z0 = Z0 + 0.03;
+    function drawNFTree(startingHeight, tokenSymbol) {
+      const startingBranchWeight = Math.max(3, 50*startingHeight)
+      const startingBranchHeight = Math.max(30, mod1 * 325)
+      const tokenToConfig = {
+        'eth': {color: 333},
+        'btc': {color: 111}
+      }
+      const startingColor = tokenToConfig[tokenSymbol].color
+      branch(width/2, height, p5.radians(-90), startingBranchHeight, startingBranchWeight, 20, startingColor)
     }
 
+    function branch(startX, startY, branchAngle, branchLength, branchWeight, twigSteps, branchColor) {
+      
+      let twigStartX = startX;
+      let twigStartY = startY;
+      const twigLength = branchLength / twigSteps;
+      const branchEndWeight = branchWeight * 0.4
+
+      for(let i = 0; i < twigSteps; i++){
+      
+        let twigRandAngle = p5.random(-p5.PI, p5.PI) * 0.05;
+        let twigRandLength = p5.random(0.5, 1.5);
+        let twigEndX = twigStartX + p5.cos(branchAngle + twigRandAngle) * (twigLength *  twigRandLength);
+        let twigEndY = twigStartY + p5.sin(branchAngle + twigRandAngle) * (twigLength *  twigRandLength);
+        let twigWeight = p5.map(i, 0, twigSteps, branchWeight, branchEndWeight);
+
+        drawTwig(twigStartX, twigStartY, twigEndX, twigEndY, twigWeight, branchColor, branchAngle);
+
+        twigStartX = twigEndX;
+        twigStartY = twigEndY;
+      }
+
+      //Create sub branches
+      if( branchWeight > 1 ){ 
+        
+        let branchNum = Math.trunc(p5.random(2, 8));
+
+        for(let i = 0; i < branchNum; i++){
+        
+            let newBranchX = twigStartX;
+            let newBranchY = twigStartY;
+            let newBranchAngle = branchAngle + p5.random(-p5.PI/3, p5.PI/3);
+            let newBranchLength = branchLength * 0.6;
+            let newBranchWeight = branchEndWeight;
+            let newTwigSteps = Math.trunc(twigSteps*0.9);
+            let newBranchColor = Math.trunc(branchColor*0.9);
+            
+          branch(newBranchX , newBranchY , newBranchAngle, newBranchLength , newBranchWeight , newTwigSteps , newBranchColor);
+        }
+      } 
+    }
+
+    function drawTwig(twigStartX, twigStartY, twigEndX, twigEndY, twigWeight, twigColor, branchAngle){
+      p5.push();
+
+      if(twigWeight < 2){
+        p5.stroke(twigColor, 100, 40) 
+      }
+      else {
+        p5.stroke(71,32,0)
+      }
+      p5.strokeWeight(twigWeight*0.4);
+      p5.line(twigStartX, twigStartY, twigEndX, twigEndY);
+
+      p5.pop()
+    
+    }
+    
 
     // draw the buffer to the main canvas
     // TODO apply some more filters to add noise
-    p5.image(ringsCanvas, 0, 0);
+    p5.image(treeCanvas, 0, 0);
 
     // example assignment of hoisted value to be used as NFT attribute later
     hoistedValue.current = 42;
@@ -172,23 +221,6 @@ const CustomStyle = ({
     //     dot.radius * M * mod1
     //   );
     // });
-  };
-
-  let L = 0;
-  function drawRing(p5, ringsCanvas, radius, Z0?) {
-
-    ringsCanvas.beginShape();
-    for(var i=0; i <= NUM_POINTS; i++){
-      const X0 = wiggle*(100 + radius * p5.cos(L));
-      const Y0 = wiggle*(100 + radius * p5.sin(L));
-      let _rad = radius + 50*p5.noise(X0,Y0,Z0);
-      const X = _rad*p5.cos(L);
-      const Y = _rad*p5.sin(L);
-
-      p5.vertex(X, Y);
-      L = L + p5.TWO_PI/NUM_POINTS;
-    }
-    ringsCanvas.endShape();
   }
 
   return <Sketch setup={setup} draw={draw} windowResized={handleResize} />;
