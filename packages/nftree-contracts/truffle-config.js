@@ -18,11 +18,9 @@
  *
  */
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
-// const infuraKey = "fj4jll3k.....";
-//
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
+require('dotenv').config();
+
+const PrivateKeyProvider = require('truffle-privatekey-provider');
 
 module.exports = {
   /**
@@ -66,6 +64,13 @@ module.exports = {
     // timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
     // skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     // },
+    kovan: {
+      provider: () => new PrivateKeyProvider(
+        process.env.WALLET_PRIVATE_KEY,
+        process.env.PROVIDER_URL,
+      ),
+      network_id: 42,
+    },
     // Useful for private networks
     // private: {
     // provider: () => new HDWalletProvider(mnemonic, `https://network.io`),
@@ -82,7 +87,7 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: '0.7.0', // Fetch exact version from solc-bin (default: truffle's version)
+      version: '0.6.12', // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
       // settings: {          // See the solidity docs for advice about optimization and evmVersion
       optimizer: {

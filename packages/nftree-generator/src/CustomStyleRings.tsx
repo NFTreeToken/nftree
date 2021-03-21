@@ -5,12 +5,15 @@ import * as P5 from 'p5';
 import * as _ from 'lodash-es';
 
 import { getPricingData } from './thegraph';
+import { getTokenPriceData } from './covalent';
 import { ETH_PRICE_DATA } from './prices';
 
 import tokenSVG_aETH from './images/aETH2.svg';
 import tokenPNG_aETH from './images/aETH.png';
 
 const SELECTED_TOKEN = 'WBTC';
+
+getTokenPriceData('WBTC', '2020-01-01', '2020-02-15');
 
 // fetch data from thegraph
 // (async function go() {
@@ -148,6 +151,9 @@ const CustomStyle = ({
     const WIDTH = DEFAULT_SIZE;
     const HEIGHT = DEFAULT_SIZE;
 
+    // p5.clear and p5.background dont seem to work properly
+    // due to bugs around screen pixel density...
+    // so we just paint over the whole canvas instead
     p5.fill(backgroundColor);
     p5.rect(0,0,WIDTH, HEIGHT)
 
@@ -180,22 +186,30 @@ const CustomStyle = ({
     p5.text("FPS: " + fps.toFixed(0), 10, 100);
 
 
+    // show date and price
+    p5.fill('#FFFFFF');
+    p5.textSize(100);
+    const dateStr = priceData[numFramesToShow - 1].date;
+    const priceStr = priceData[numFramesToShow - 1].price.toFixed(2);
+    p5.text(dateStr, 10, HEIGHT - 50);
+    p5.text(`$${priceStr} USD`, 1500, HEIGHT - 50);
+
+
     // create an graphics buffer to draw to, so we can apply effects to
     // before adding to the main canvas
     const ringsCanvas = p5.createGraphics(WIDTH, HEIGHT);
     ringsCanvas.translate(XCENTER, YCENTER);
 
 
-    ringsCanvas.noFill();
+    ringsCanvas.fill('#FFF');
     ringsCanvas.stroke('#FFF');
     ringsCanvas.strokeWeight(2);
 
     // draw first ring
-    let radius = 5;
+    let radius = 1;
     drawRing(radius, 1, 0);
 
-    numFramesToShow++;
-    if (numFramesToShow > priceData.length) numFramesToShow = 1;
+    ringsCanvas.noFill();
 
     for (let i = 1; i < numFramesToShow; i++) {
       const price = priceData[i].price;
@@ -216,7 +230,7 @@ const CustomStyle = ({
       drawRing(radius, strokeWidth, i);
     }
 
-    const barkThickness = radius * .05;
+    const barkThickness = radius * .03;
 
     radius += barkThickness + 5
     drawRing(radius, barkThickness, priceData.length, true);
@@ -280,15 +294,15 @@ const CustomStyle = ({
       ringsCanvas.beginShape();
       for(var i=0; i <= NUM_POINTS; i++){
         // let _rad = radius + 50*p5.noise(X0,Y0,Z0);
-        let _rad = radius + 50 * p5.noise(
+        let _rad = radius + (10 + 60 * radius/1000) * p5.noise(
           0.005*(radius * p5.cos(L)),
           0.005*(radius * p5.sin(L)),
           noiseZ + .02 * ringNumber
         );
         if (isFinal) {
           _rad = radius + 50 * p5.noise(
-            0.02*(radius * p5.cos(L)),
-            0.02*(radius * p5.sin(L)),
+            0.01*(radius * p5.cos(L)),
+            0.01*(radius * p5.sin(L)),
           );
         }
 
@@ -302,6 +316,8 @@ const CustomStyle = ({
       ringsCanvas.endShape();
     }
     noiseZ += .1;
+    numFramesToShow++;
+    if (numFramesToShow > priceData.length) numFramesToShow = 1;
   };
 
   return <Sketch setup={setup} draw={draw} windowResized={handleResize} />;
