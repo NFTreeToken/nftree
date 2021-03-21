@@ -34,6 +34,11 @@ export const useTreeIdAt = (ownerAddress: string, index: number) => {
   return useCacheCall(NFTREE, 'tokenIdAt', ownerAddress, index);
 };
 
+export const useOwnerOf = (tokenId: number) => {
+  const useCacheCall = useUseCacheCall();
+  return useCacheCall(NFTREE, 'ownerOf', tokenId);
+};
+
 export const useIsChopped = (tokenId: number) => {
   const useCacheCall = useUseCacheCall();
   return useCacheCall(NFTREE, 'isChopped', tokenId);
