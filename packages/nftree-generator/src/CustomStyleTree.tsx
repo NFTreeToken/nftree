@@ -162,7 +162,7 @@ const CustomStyle = ({
         let twigEndY = twigStartY + p5.sin(branchAngle + twigRandAngle) * (twigLength *  twigRandLength);
         let twigWeight = p5.map(i, 0, twigSteps, branchWeight, branchEndWeight);
 
-        drawTwig(twigStartX, twigStartY, twigEndX, twigEndY, twigWeight, branchColor, branchAngle);
+        drawTwig(twigStartX, twigStartY, twigEndX, twigEndY, twigWeight, branchColor);
 
         twigStartX = twigEndX;
         twigStartY = twigEndY;
@@ -183,12 +183,12 @@ const CustomStyle = ({
             let newTwigSteps = Math.trunc(twigSteps*0.9);
             let newBranchColor = Math.trunc(branchColor*0.9);
             
-          branch(newBranchX , newBranchY , newBranchAngle, newBranchLength , newBranchWeight , newTwigSteps , newBranchColor);
+          branch(newBranchX, newBranchY, newBranchAngle, newBranchLength, newBranchWeight, newTwigSteps, newBranchColor);
         }
       } 
     }
 
-    function drawTwig(twigStartX, twigStartY, twigEndX, twigEndY, twigWeight, twigColor, branchAngle){
+    function drawTwig(twigStartX, twigStartY, twigEndX, twigEndY, twigWeight, twigColor){
       p5.push();
 
       if(twigWeight < 2){
