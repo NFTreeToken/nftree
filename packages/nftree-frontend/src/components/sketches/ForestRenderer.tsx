@@ -55,8 +55,7 @@ Getting started:
  - check out p5.js documentation for examples!
 */
 
-const DEFAULT_WIDTH = 3000;
-const DEFAULT_HEIGHT = 1000;
+const DEFAULT_SIZE = 1000;
 
 const SEED = Math.random();
 
@@ -75,17 +74,22 @@ const ForestRenderer = ({
   // canvasRef,
   // attributesRef,
   backgroundColor = '#222',
+  forestMode = false,
 }) => {
   const TOKEN_LOGOS: Record<string, P5.Image> = {};
 
   let canvas: P5.Renderer;
 
+  const WIDTH = forestMode ? 3 * DEFAULT_SIZE : DEFAULT_SIZE;
+  const HEIGHT = DEFAULT_SIZE;
+
   // setup() initializes p5 and the canvas element, can be mostly ignored in our case (check draw())
   const setup = (p5: P5, canvasParentRef) => {
     console.log('called setup');
     console.log(canvasParentRef);
+
     // Keep reference of canvas element for snapshots
-    canvas = p5.createCanvas(DEFAULT_WIDTH, DEFAULT_HEIGHT).parent(canvasParentRef);
+    canvas = p5.createCanvas(WIDTH, HEIGHT).parent(canvasParentRef);
     p5.pixelDensity(p5.displayDensity());
     canvas.style('width', '100%');
     canvas.style('height', '100%');
@@ -136,10 +140,8 @@ const ForestRenderer = ({
 
     // if (drawn) return;
     // drawn = true;
-    const WIDTH = DEFAULT_WIDTH;
-    const HEIGHT = DEFAULT_HEIGHT;
 
-    const GROUND_Y = DEFAULT_HEIGHT * 1;
+    const GROUND_Y = HEIGHT * 1;
 
     // p5.clear and p5.background dont seem to work properly
     // due to bugs around screen pixel density...
@@ -170,14 +172,18 @@ const ForestRenderer = ({
     treeCanvas.translate(XCENTER, YCENTER);
     treeCanvas.noFill();
 
-    drawNFTree(500, 200, 'BTC');
-    drawNFTree(600, 400, 'ETH');
-    drawNFTree(900, 800, 'BTC');
-    drawNFTree(1200, 100, 'ETH');
-    drawNFTree(1500, 10, 'ETH');
-    drawNFTree(1600, 50, 'ETH');
-    drawNFTree(1900, 600, 'BTC');
-    drawNFTree(2500, 300, 'BTC');
+    if (forestMode) {
+      drawNFTree(500, 200, 'BTC');
+      drawNFTree(600, 400, 'ETH');
+      drawNFTree(900, 800, 'BTC');
+      drawNFTree(1200, 100, 'ETH');
+      drawNFTree(1500, 10, 'ETH');
+      drawNFTree(1600, 50, 'ETH');
+      drawNFTree(1900, 600, 'BTC');
+      drawNFTree(2500, 300, 'BTC');
+    } else {
+      drawNFTree(WIDTH / 2, 500, 'BTC');
+    }
 
     function drawNFTree(xPosition, height, tokenSymbol) {
       const startingBranchWeight = Math.max(3, height * 0.1);
