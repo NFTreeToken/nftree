@@ -17,7 +17,9 @@ contract NFTreeDemo is ERC721 {
   mapping (address => EnumerableSet.UintSet) private _ownerMap;
   mapping (uint256 => bool) private _choppedMap;
 
-  constructor() public ERC721("NFTree", "NFTREE") {}
+  constructor() public ERC721("NFTree", "NFTREE") {
+    _setBaseURI("https://nftreetoken.com/nftree/");
+  }
 
   function tokenIdAt(address owner, uint i)
     external
