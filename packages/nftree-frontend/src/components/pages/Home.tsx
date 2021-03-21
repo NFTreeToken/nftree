@@ -15,7 +15,7 @@ import Page from '../lib/Page';
 import Spinner from '../lib/Spinner';
 
 const PlantButton = styled(Button)`
-  margin-bottom: 10px;
+  margin: 10px 0;
 `;
 
 const Section = styled.div`
@@ -102,7 +102,7 @@ const Home = () => {
     <Page>
       <Grid item xs={12}>
         <Section>
-          <Typography variant="h4" component="h2" paragraph>Welcome to NFTree</Typography>
+          <Typography variant="h4" paragraph component="h2">Welcome to NFTree</Typography>
           <PlantButton
             color="primary"
             variant="contained"
