@@ -11,7 +11,6 @@ import styled from 'styled-components';
 
 import { AAVE_TOKEN_ADDRESSES } from '../../data/constants';
 import { useCurrentAddress, usePlantSeed } from '../../hooks';
-
 import Page from '../lib/Page';
 
 const Spinner = styled(CircularProgress).attrs({ color: 'secondary' })`
@@ -25,6 +24,7 @@ const Home = () => {
   const [plantPopupIsOpen, setPlantPopupIsOpen] = useState(false);
   const [newTreeAssetType, setNewTreeAssetType] = useState('WETH');
   const [newTreeAssetAmount, setNewTreeAssetAmount] = useState(1);
+  const [newTreeName, setNewTreeName] = useState('');
 
   function tryPlant() {
     plantSeed();
@@ -45,6 +45,16 @@ const Home = () => {
             When you are ready, you can chop down your tree to retreive your funds along with an NFT showing the history of it's growth.
           </p>
         </DialogContentText>
+
+        <TextField
+          autoFocus
+          id="name"
+          label="Name your tree"
+          value={newTreeName}
+          onChange={(e) => setNewTreeName(e.target.value)}
+          fullWidth
+        />
+
         <Select
           fullWidth
           value={newTreeAssetType}
@@ -55,9 +65,6 @@ const Home = () => {
           ))}
         </Select>
         <TextField
-          autoFocus
-          margin="dense"
-          id="name"
           label="Initial Deposit Amount"
           type="number"
           value={newTreeAssetAmount}
