@@ -102,7 +102,9 @@ const Home = () => {
     <Page>
       <Grid item xs={12}>
         <Section>
-          <Typography variant="h4" paragraph component="h2">Welcome to NFTree</Typography>
+          <Typography variant="h4" paragraph component="h2">
+            🌲🌲🌲 Turns out money DOES grow on trees 💰💰💰
+          </Typography>
           <PlantButton
             color="primary"
             variant="contained"
@@ -135,12 +137,10 @@ const Home = () => {
               <li>
                 <b>Water your NFTrees</b>
                 - deposit more funds into an NFTree to save and earn even more interest
-
               </li>
               <li>
                 <b>View your NFTree forest</b>
-                - view all of your active investments as a beautiful forest of growing trees
-
+                - view your wallet as a beautiful forest of growing trees, showcasing your NFTree investments as well as any other NFTs you own
               </li>
               <li>
                 <b>Chop down an NFTree</b>
@@ -148,10 +148,11 @@ const Home = () => {
               </li>
             </ul>
 
-            While your trees are growing, they can be viewed in our wallet renderer which shows all of your NFTrees, however you cannot view a single tree's NFT art as it still growing. Once you cut down an NFTree, the actual NFT art is created. Both a static rendering of the tree's rings that are tied to the growth of your investment, as well as an animation showing the growth progression over time.
+            <p>While your trees are growing, they can be viewed in our wallet renderer which shows all of your NFTrees along with other NFT art that you hold. Once you cut down your NFTree, a new piece of generative art is created that looks like the rings of the tree, along with an animation of how it grew.</p>
 
-            Users can of course buy/sell/trade their NFTrees before or after they have been cut down, for the actual value of invested as well as the speculative value of the unique art it will (or already did) turn into.
+            <p>Both the living and chopped renderings of your tree are based on the properties of your investment. You can think of the type of asset like the "species" of tree and the growth being controlled by both market fluctuations and any extra investments you topped it up with along the way.</p>
 
+            <p>Users can of course buy/sell/trade their NFTrees before or after they have been cut down, with pricing based on both the actual value invested as well as the speculative value of the unique art it will (or already did) turn into.</p>
           </Typography>
         </Section>
       </Grid>

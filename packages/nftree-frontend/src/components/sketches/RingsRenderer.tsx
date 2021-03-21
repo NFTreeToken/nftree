@@ -162,11 +162,11 @@ const RingsRenderer = ({
     // p5.noiseSeed(parseInt(`0x${blockHash.substr(16, 14)}`, 16));
 
     // show framerate
-    const fps = p5.frameRate();
-    p5.fill(100);
-    p5.color('#FFF');
-    p5.textSize(50);
-    p5.text(`FPS: ${fps.toFixed(0)}`, 10, 100);
+    // const fps = p5.frameRate();
+    // p5.fill(100);
+    // p5.color('#FFF');
+    // p5.textSize(50);
+    // p5.text(`FPS: ${fps.toFixed(0)}`, 10, 100);
 
     // show date and price
     p5.fill('#FFFFFF');

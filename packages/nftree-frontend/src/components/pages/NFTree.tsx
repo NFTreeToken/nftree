@@ -17,7 +17,7 @@ const NFTree = () => {
   const { tokenId: tokenIdString }: { tokenId: string } = useParams();
   const tokenId = Number(tokenIdString);
   const ownerOf = useOwnerOf(tokenId);
-  const isChopped = useIsChopped(tokenId);
+  const isChopped = useIsChopped(tokenId) || window?.location?.search === '?chop';
   const [chopTree, pending] = useChopTree(tokenId);
 
   const isMine = true;
@@ -31,7 +31,7 @@ const NFTree = () => {
   let depositAmountUSD;
   let chopDatePriceUSD;
   let chopAmountUSD;
-  if (priceData) {
+  if (priceData?.length) {
     console.log('PRICES', priceData);
     depositDatePriceUSD = _.find(priceData as any, { date: depositBlockDate }).price;
     depositAmountUSD = depositDatePriceUSD * treeMetadata.depositAmount;
@@ -42,7 +42,7 @@ const NFTree = () => {
       <Typography>{`NFTree id: ${tokenId}`}</Typography>
 
       <div className="render-wrapper">
-        {isChopped ? <RingsRenderer /> : <ForestRenderer />}
+        {isChopped ? <RingsRenderer /> : <ForestRenderer treeIds={[tokenId]} />}
       </div>
       <div>
         {`Current Owner: ${ownerOf}`}

@@ -11,23 +11,8 @@ import { ETH_PRICE_DATA } from '../../data/prices';
 import tokenSVG_aETH from '../../images/token-pngs/aETH.png';
 import tokenPNG_aETH from '../../images/token-svgs/aETH.svg';
 import { getTokenPriceData } from '../../utils/covalent';
+import { getTreeMetadata } from '../../utils/fake-tree-metadata';
 import { getPricingData } from '../../utils/thegraph';
-
-const SELECTED_TOKEN = 'WBTC';
-
-// fetch data from thegraph
-// (async function go() {
-//   const prices = await getPricingData(SELECTED_TOKEN, '2020-09-01', '2020-10-20');
-//   console.log(prices);
-// })();
-
-const START_DATE_ISO = '2020-12-10';
-const END_DATE_ISO = '2021-02-15';
-
-const priceData = _.filter(ETH_PRICE_DATA, (item) => (item.date > START_DATE_ISO && item.date <= END_DATE_ISO));
-console.log(priceData);
-
-const noiseZ = 0;
 
 /*
 Create your Custom style to be turned into a EthBlock.art Mother NFT
@@ -53,6 +38,22 @@ Getting started:
  - check out p5.js documentation for examples!
 */
 
+const SELECTED_TOKEN = 'WBTC';
+
+// fetch data from thegraph
+// (async function go() {
+//   const prices = await getPricingData(SELECTED_TOKEN, '2020-09-01', '2020-10-20');
+//   console.log(prices);
+// })();
+
+const START_DATE_ISO = '2020-12-10';
+const END_DATE_ISO = '2021-02-15';
+
+const priceData = _.filter(ETH_PRICE_DATA, (item) => (item.date > START_DATE_ISO && item.date <= END_DATE_ISO));
+console.log(priceData);
+
+const noiseZ = 0;
+
 const DEFAULT_SIZE = 1000;
 
 const SEED = Math.random();
@@ -62,17 +63,38 @@ const TREE_SPECIES_CONFIG = {
     leafColor: '#0D1C10',
     trunkColor: '#1A120D',
   },
-  BTC: {
+  WBTC: {
     leafColor: '#FF9416',
     trunkColor: '#344246',
+  },
+  DAI: {
+    leafColor: '#00C90E',
+    trunkColor: '#9E3A00',
+  },
+  LINK: {
+    leafColor: '#FF9416',
+    trunkColor: '#344246',
+  },
+  MANA: {
+    leafColor: '#15FFD6',
+    trunkColor: '#F715FF',
+  },
+  USDC: {
+    leafColor: '#006313',
+    trunkColor: '#3D3D3D',
+    leaves: true,
+  },
+  ZRX: {
+    leafColor: '#C2423F',
+    trunkColor: '#5F5F5F',
+    leaves: true,
   },
 };
 
 const ForestRenderer = ({
   // canvasRef,
-  // attributesRef,
-  backgroundColor = '#222',
   forestMode = false,
+  treeIds = [1, 2, 3, 4, 5, 6, 7, 8],
 }) => {
   const TOKEN_LOGOS: Record<string, P5.Image> = {};
 
@@ -80,6 +102,8 @@ const ForestRenderer = ({
 
   const WIDTH = forestMode ? 3 * DEFAULT_SIZE : DEFAULT_SIZE;
   const HEIGHT = DEFAULT_SIZE;
+
+  const treeData = _.map(treeIds, (id) => getTreeMetadata(id));
 
   // setup() initializes p5 and the canvas element, can be mostly ignored in our case (check draw())
   const setup = (p5: P5, canvasParentRef) => {
@@ -131,11 +155,6 @@ const ForestRenderer = ({
   const draw = (p5: P5) => {
     // p5.noLoop(); //
 
-    p5.randomSeed(SEED);
-    p5.noiseSeed(SEED);
-
-    console.log(`setting seed to ${SEED}`);
-
     // if (drawn) return;
     // drawn = true;
 
@@ -152,11 +171,11 @@ const ForestRenderer = ({
     const YCENTER = HEIGHT / 2;
 
     // show framerate
-    const fps = p5.frameRate();
-    p5.fill(100);
-    p5.color('#FFF');
-    p5.textSize(50);
-    p5.text(`FPS: ${fps.toFixed(0)}`, 10, 100);
+    // const fps = p5.frameRate();
+    // p5.fill(100);
+    // p5.color('#FFF');
+    // p5.textSize(50);
+    // p5.text(`FPS: ${fps.toFixed(0)}`, 10, 100);
 
     // since the drawing is actually in a loop, we need to set a seed or it changes on each render
 
@@ -171,22 +190,20 @@ const ForestRenderer = ({
     treeCanvas.noFill();
 
     if (forestMode) {
-      drawNFTree(500, 200, 'BTC');
-      drawNFTree(600, 400, 'ETH');
-      drawNFTree(900, 800, 'BTC');
-      drawNFTree(1200, 100, 'ETH');
-      drawNFTree(1500, 10, 'ETH');
-      drawNFTree(1600, 50, 'ETH');
-      drawNFTree(1900, 600, 'BTC');
-      drawNFTree(2500, 300, 'BTC');
+      for (let i = 0; i < treeData.length; i++) {
+        drawNFTree(treeData[i].xPosition, treeData[i].size, treeData[i].symbol, treeData[i].depositBlock);
+      }
     } else {
-      drawNFTree(WIDTH / 2, 500, 'BTC');
+      drawNFTree(WIDTH / 2, treeData[0].size, treeData[0].symbol, treeData[0].depositBlock);
     }
 
-    function drawNFTree(xPosition, height, tokenSymbol) {
+    function drawNFTree(xPosition, height, tokenSymbol, depositBlock) {
+      p5.randomSeed(depositBlock + 2);
+      p5.noiseSeed(depositBlock);
+
       const startingBranchWeight = Math.max(3, height * 0.1);
       const startingBranchHeight = Math.max(30, height * 0.5);
-      const speciesConfig = TREE_SPECIES_CONFIG[tokenSymbol];
+      const speciesConfig = TREE_SPECIES_CONFIG[tokenSymbol] || TREE_SPECIES_CONFIG.ETH;
       branch(speciesConfig, xPosition, GROUND_Y, p5.radians(-90), startingBranchHeight, startingBranchWeight, 10);
     }
 
@@ -236,16 +253,21 @@ const ForestRenderer = ({
     ) {
       // p5.push();
 
+      p5.strokeWeight(twigWeight * (branchDepth === 0 ? 0.7 : 0.4));
+
       // color leaves differently
       if (twigWeight < 0.7) {
         p5.stroke(speciesConfig.leafColor);
+        p5.fill(speciesConfig.leafColor);
+        if (speciesConfig.leaves) {
+          p5.circle(twigEndX, twigEndY, 5);
+        }
       } else {
         p5.stroke(speciesConfig.trunkColor);
       }
+      p5.line(twigStartX, twigStartY, twigEndX, twigEndY);
 
       // make first piece (trunk) a little thicker
-      p5.strokeWeight(twigWeight * (branchDepth === 0 ? 0.7 : 0.4));
-      p5.line(twigStartX, twigStartY, twigEndX, twigEndY);
 
       // p5.pop();
     }

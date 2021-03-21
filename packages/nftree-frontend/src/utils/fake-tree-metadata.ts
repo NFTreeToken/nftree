@@ -16,5 +16,7 @@ export function getTreeMetadata(treeId) {
     chopBlock: depositBlock + random.range(MAX_BLOCK - depositBlock),
     depositAmount: random.floatBetween(1, 5),
     numWaterings: random.range(5),
+    size: random.intBetween(20, 850),
+    xPosition: random.intBetween(100, 2900),
   };
 }
